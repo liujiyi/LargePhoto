@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -62,6 +63,7 @@ public class LargeActivity extends Activity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_large);
 
@@ -178,6 +180,13 @@ public class LargeActivity extends Activity {
                 int currentValue = (Integer) animator.getAnimatedValue();
                 // 获得每次变化后的属性值
                 Log.d("===top===", currentValue+"");
+                if (currentValue < getStatusBarHeight()/2 && !aa) {
+                    Log.d("===toptop===", currentValue+"");
+                    Log.d("===toptop===", +getStatusBarHeight()+"");
+                    aa = true;
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                }
                 // 输出每次变化后的属性值进行查看
                 FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mLayout.getLayoutParams();
                 layoutParams.topMargin = currentValue;
@@ -189,7 +198,8 @@ public class LargeActivity extends Activity {
         animSet.play(widthAnimator).with(heightAnimator).with(leftAnimator).with(topAnimator);
         animSet.start();
     }
-
+    private boolean aa;
+    private boolean bb;
     /**
      * 模拟退场动画
      */
@@ -239,7 +249,6 @@ public class LargeActivity extends Activity {
                 // 获得每次变化后的属性值
                 Log.d("===left===", currentValue+"");
                 // 输出每次变化后的属性值进行查看
-
                 FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mLayout.getLayoutParams();
                 layoutParams.leftMargin = currentValue;
                 mLayout.setLayoutParams(layoutParams);
@@ -255,11 +264,11 @@ public class LargeActivity extends Activity {
                 int currentValue = (Integer) animator.getAnimatedValue();
                 // 获得每次变化后的属性值
                 Log.d("===top===", currentValue+"");
-                if (currentValue >= getStatusBarHeight()) {
-                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-
-                }
                 // 输出每次变化后的属性值进行查看
+                if (currentValue > getStatusBarHeight() && !bb) {
+                    bb = true;
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                }
                 FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mLayout.getLayoutParams();
                 layoutParams.topMargin = currentValue;
                 mLayout.setLayoutParams(layoutParams);
@@ -292,7 +301,7 @@ public class LargeActivity extends Activity {
         });
         animSet.start();
     }
-    
+
     /**
      * 获取屏幕尺寸
      */
